@@ -1,0 +1,9 @@
+radius-server host 192.168.10.254 key 123456
+radius-server host 192.168.3.177 key 123456
+aaa accounting network start-stop radius
+aaa authentication port-access eap-radius
+aaa authentication mac-based eap-radius
+
+aaa port-access authenticator 9 client-limit 4
+aaa port-access authenticator active
+aaa port-access mac-based 8 client-limit 4
