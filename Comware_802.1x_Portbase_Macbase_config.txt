@@ -1,0 +1,79 @@
+802.1x PORT BASE VE MAC BASE CONFIG TAMPLATE
+
+1---------------802.1x Enable--------------
+
+   dot1x
+   dot1x authentication-method eap
+   dot1x timer reauth-period 60
+
+
+2------------ Şablon oluşturma-----------------
+
+   radius scheme cppm
+   primary authentication 10.10.150.200
+   primary accounting 10.10.150.200
+   secondary authentication 10.10.150.201
+   secondary accounting 10.10.150.201
+   accounting-on enable
+   key authentication cipher 123456
+   key accounting cipher 123456
+   user-name-format without-domain
+   nas-ip 10.10.2.5
+   
+
+3-Domain oluşturma ve şablon ekleme-----------  
+ 
+   domain 802.1x
+   authentication lan-access radius-scheme cppm
+   authorization lan-access radius-scheme cppm
+   accounting lan-access radius-scheme cppm
+    
+    
+    
+4-Default Domain seçimi------------------- 
+   
+    domain default enable 802.1x
+    
+    
+5-Port Base access Control AD users-------------------  
+ 
+    interface GigabitEthernet1/0/11
+    description Dot1x_Ofis_Kablolu
+    port access vlan 150
+    stp edged-port
+    stp port bpdu-protection enable
+    poe enable
+    dot1x
+    dot1x port-method portbased
+    undo dot1x handshake
+    undo dot1x multicast-trigger
+    dot1x unicast-trigger
+    loopback-detection enable vlan 1 to 4094 
+    loopback-detection action shutdown
+    
+     
+6-MAC base Global enable---------------------
+
+     mac-authentication
+     
+7-Mac Base access control ------------------- 
+  
+    interface GigabitEthernet1/0/11
+     description Dot1x_Ofis_Kablolu
+     port access vlan 150
+     stp edged-port
+     stp port bpdu-protection enable
+     poe enable
+     dot1x
+     mac-authentication
+     dot1x port-method macbased
+     undo dot1x handshake
+     undo dot1x multicast-trigger
+     dot1x unicast-trigger     
+     loopback-detection enable vlan 1 to 4094 
+     loopback-detection action shutdown
+     
+     
+     
+     
+     
