@@ -1,0 +1,36 @@
+; J9851A Configuration Editor; Created on release #KB.16.08.0001
+; Ver #14:0f.6f.f8.1d.fb.7f.bf.bb.ff.7c.59.fc.7b.ff.ff.fc.ff.ff.3f.ef:60
+hostname "SW-1"
+module A type j9990a
+module B type j9987a
+vxlan enable
+vxlan tunnel 1 overlay-vlan 20
+ip route 2.2.2.2 255.255.255.255 10.0.1.2
+interface loopback 1
+   ip address 1.1.1.1
+   exit
+interface tunnel 1
+   tunnel name "left"
+   tunnel mode vxlan
+   tunnel source 1.1.1.1
+   tunnel destination 2.2.2.2
+   exit
+snmp-server community "public" unrestricted
+oobm
+   ip address dhcp-bootp
+   ipv6 enable
+   ipv6 address dhcp full
+   exit
+vlan 1
+   name "DEFAULT_VLAN"
+   no untagged A2
+   untagged A1,A3-A24,B1-B24
+   ip address 10.0.1.1 255.255.255.252
+   exit
+vlan 20
+   name "VLAN20"
+   untagged A2
+   no ip address
+   exit
+no allow-v2-modules
+virtual-network 300 20 "lll"

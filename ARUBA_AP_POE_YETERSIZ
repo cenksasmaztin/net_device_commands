@@ -1,0 +1,10 @@
+(Instant AP)(config)# ipm
+(Instant AP)(ipm)# enable
+(Instant AP)(ipm)#ipm-power-reduction-step-prio ipm-step disable_usb priority 1
+
+(Instant AP)(ipm)# end
+(Instant AP)# commit apply 
+
+komutlarıyla IPM (Intelligent Power Management) özelliğini aktif ederseniz  bu seri APler 13.5W çeker. 
+
+disable_usb ile 5 V daha az kullanır.

@@ -1,0 +1,10 @@
+The process below is converting AP to IAP only with console cable and no controller needed.Setup TFTP server with firmware ready and connect to the AP with Putty/Serial (Console cable)Stop the apboot by any key when see this message "Hit <Enter> to stop autoboot:3"
+1. proginv system ccode CCODE-RW-de6fdb363ff04c13ee261ec04fbb01bdd482d1cd(Important, to write the country code. When converting to IAP the IAP must have country code to operate. Not sure for US-AP as never tried so because it is tied with US regulation, but for the code try to change only RW to US and keep everything else same. Please try and let us know, if not, need to find out the US with the hashcode accordingly)
+2. invent -w(I***mportant*****,** converting AP into IAP)
+3. dhcp(Get the ip address for the AP before upgrading os through TFTP.If could not get the ip from DHCP server, use this command to set static ip for the ap "setenv ipaddr 192.168.1.2")
+4. setenv serverip 192.168.88.177(Set TFTP server ip before flashing the firmware OS)
+5. upgrade os 0 ArubaInstant_xxx_6.x.x.x-4.x.x.x_5xxxx
+6. upgrade os 1 ArubaInstant_xxx_6.x.x.x-4.x.x.x_5xxxx(there are 2 boot image on the ap, just to make sure it will not rollback to AP-OS)
+7. factory_reset(optional, clean up the static ip that set before)
+8. saveenv*(*IMPORTANT, save the configuration so the "turn off mobility" will not appear)
+9. reset

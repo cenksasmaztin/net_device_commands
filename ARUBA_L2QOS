@@ -1,0 +1,7 @@
+interface 23 
+   name "dunya_cam1" 
+   speed-duplex 100-full 
+   qos dscp 101110 
+ 
+ 
+L2 QoS IÇIN tag port gerekli  

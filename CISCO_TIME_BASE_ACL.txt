@@ -1,0 +1,71 @@
+Time-based ACL’ler yapilandirilmasina göre güvenlik duvarinin trafigi günü haftanin yada ayin belli zamanlarinda kisitlamasini saglar. Ayrica network ten kimi zaman özel bir trafik geçirmek gerekebilir, bu trafik belli bir süre akicagi için bunun güvenliginin saglanamsi için gerekli olan güvenlik duvari da bu süre zarfinda etkii etmesi gerekmektedir.
+
+Time-Based ACL Konfigurasyonu:
+
+Time-based ACL tanimlamak için öncelikle, time-range komutuyla bir zaman dilimini belirlemek gerekmektedir.
+
+Router(config)# time-range time_range_name
+
+Daha sonra router sub-configuration moda düser ve burada yaratilacak zaman diliminin tanimi yapilmaktadir. Bu modda 2 farkli komut kullanilarak zaman dilimi tanimlanabilir.
+
+Router(config-time)# absolute [start_time start_date] [end_time end_date]
+
+ve
+
+Router(config-time)# periodic day_of_the_week hh:mm to [day_of_the_week] hh:mm
+
+“Absolute” komutu ile time-range komutu içinde belirlenen zaman dilimi istenilen baslangiç ve bitis “saat-dakika-saniye-gün- ay-yil” belirlenerek ayarlanabilir.
+
+“Periodic” komutu ile ise istenilen zaman dilimi;
+
+- monday
+
+- tuesday
+
+- wednesday
+
+- thursday
+
+- friday
+
+- saturday
+
+- sunday
+
+- daily (every day)
+
+- weekdays (Monday through Friday)
+
+- weekend (Saturday and Sunday)
+
+Parametreleriyle belirlenerek istenilen sekilde ayarlanabilmektedir. Ayrica “periodic” komutunun “absolute” komutundan bir farki daha, belirlenecek zaman dilimi içerisine birden fazla tanim yapilabilemektedir.
+
+time-range EVERYOTHERDAY
+
+periodic Monday Wednesday Friday 8:00 to 17:00
+
+Ayrica üsteki örnekte de görüldügü üzere, “to” parametresi ile olusturulan zaman diliminin bitis zamani belirtilebilmektedir.
+
+Time-based ACL kullanilarak yapilan bir uygulama;
+
+R1(config)# time-range employee-time
+
+R1(config-time-range)# periodic weekdays 12:00 to 13:00
+
+R1(config-time-range)# periodic weekdays 17:00 to 19:00
+
+R1(config-time-range)# exit
+
+R1(config)# access-list 100 permit ip 192.168.1.0 0.0.0.255 any time-range employee-time
+
+R1(config)# access-list 100 deny ip any any
+
+R1(config)# interface FastEthernet 0/1
+
+R1(config-if)# ip access-group 100 in
+
+R1(config-if)# exit
+
+__________________________
+
+*Bu uygulamada internet erismi izni sadece saat 12-13 arasi ve 17-19 arasinda kullanilabilecek sekilde ayarlanmistir.

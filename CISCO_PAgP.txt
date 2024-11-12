@@ -1,0 +1,30 @@
+interface GigabitEthernet0/1
+ channel-group 1 mode desirable
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface GigabitEthernet0/2
+ channel-group 1 mode desirable
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Port-channel 1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
+
+#############################################
+
+interface GigabitEthernet0/1
+ channel-group 1 mode auto
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface GigabitEthernet0/2
+ channel-group 1 mode auto
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Port-channel 1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk

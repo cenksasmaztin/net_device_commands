@@ -1,0 +1,213 @@
+ip routing 
+
+ip multicast-routing 
+
+exit 
+
+router pim 
+
+exit 
+
+vlan 13 
+
+ip pim-dense 
+
+ip-addr 10.10.13.254 
+
+exit 
+
+exit 
+
+vlan 14 
+
+ip pim-dense 
+
+ip-addr 10.10.14.254 
+
+exit 
+
+exit 
+
+vlan 15 
+
+ip pim-dense 
+
+ip-addr 10.10.15.254 
+
+exit 
+
+Exit 
+
+ 
+
+PIM DENSE 
+
+ 
+
+ip routing  
+
+snmp-server community "public" Unrestricted  
+
+vlan 1  
+
+   name "DEFAULT_VLAN"  
+
+   untagged A3-A12,A14-A16,A18-A22,A24  
+
+   ip address dhcp-bootp  
+
+   no untagged A1-A2,A13,A17,A23  
+
+   exit  
+
+vlan 70  
+
+   name "VLAN70"  
+
+   untagged A13,A17,A23  
+
+   qos priority 6  
+
+   ip address 192.168.70.1 255.255.255.0  
+
+   tagged A3-A4  
+
+   ip igmp  
+
+   exit  
+
+vlan 10  
+
+   name "VLAN10"  
+
+   ip address 192.168.10.1 255.255.255.0  
+
+   tagged A1-A4  
+
+   exit  
+
+ip route 0.0.0.0 0.0.0.0 192.168.200.1 
+
+ip multicast-routing 
+
+router pim 
+
+   exit 
+
+router vrrp 
+
+spanning-tree 
+
+spanning-tree config-revision 1 
+
+spanning-tree priority 0 
+
+vlan 10 
+
+   ip pim-dense 
+
+      ip-addr 192.168.10.1 
+
+      exit 
+
+   vrrp vrid 10 
+
+      owner 
+
+      virtual-ip-address 192.168.10.1 255.255.255.0 
+
+      priority 255 
+
+      preempt-delay-time 60 
+
+      enable 
+
+      exit 
+
+   exit 
+
+vlan 70 
+
+   ip pim-dense 
+
+      ip-addr 192.168.70.1 
+
+      exit 
+
+   vrrp vrid 70 
+
+      owner 
+
+      virtual-ip-address 192.168.70.1 255.255.255.0 
+
+      priority 255 
+
+      preempt-delay-time 60 
+
+      enable 
+
+      exit 
+
+   exit 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ProCurve(config)# ip routing 
+
+ProCurve(config)# ip multicast-routing 
+
+ProCurve(config)# router rip 
+
+ProCurve(rip)# exit 
+
+ProCurve(config)# router pim 
+
+ProCurve(pim)# state-refresh 45 
+
+ProCurve(pim)# trap hardware-mrt-full 
+
+ProCurve(pim)# write mem 
+
+ProCurve(pim)# exit 
+
+ 
+
+ 
+
+ProCurve(config)# vlan 10 
+
+ProCurve(vlan-10)# ip igmp 
+
+ProCurve(vlan-10)# ip rip 
+
+ProCurve(vlan-10)# ip pim-dense ip-addr 10.1.1.25 
+
+ProCurve(vlan-10-pim-dense)# vlan 6 
+
+ProCurve(vlan-6)# ip igmp 
+
+ProCurve(vlan-6)# ip rip 
+
+ProCurve(vlan-6)# ip pim-dense 
+
+ProCurve(vlan-6-pim-dense)# vlan 7 
+
+ProCurve(vlan-7)# ip igmp 
+
+ProCurve(vlan-7)# ip rip 
+
+ProCurve(vlan-7)# ip pim-dense 
+
+ProCurve(vlan-7-pim-dense)# write mem 
+
+ProCurve(vlan-7-pim-dense)# exit 
+
+ProCurve(vlan-7)# exit 
+
+ 

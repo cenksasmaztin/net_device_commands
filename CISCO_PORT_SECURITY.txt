@@ -1,0 +1,19 @@
+Step 1 Router(config)# interface interface_id
+
+Step 2 Router(config-if)# switchport mode access
+
+Step 3 Router(config-if)# switchport port-security
+
+Step 4 Router(config-if)# switchport port-security
+maximum value
+
+Step 5 Router(config-if)# switchport port-security
+violation {protect | restrict | shutdown}
+
+Step 6 Router(config-if)# switchport port-security
+mac-address mac_address
+
+Step 7 Router(config-if)# end
+
+Step 8 Router# show port-security interface interface_id
+Router# show port-security address

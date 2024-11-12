@@ -1,0 +1,41 @@
+Configuration of MSTP on Core-1*********************************************** 
+!All switches in an MSTP “Domain” must have the same configuration parameters. 
+! Same MSTP Config name. Name is case sensitive. 
+Core-1(config)# spanning-tree config-name "B10" 
+! Same MSTP Revision number. 
+Core-1(config)# spanning-tree config-revision 1 
+! Same MSTP Instances definition 
+Core-1(config)# spanning-tree instance 1 vlan 10 20 108 
+Core-1(config)# spanning-tree instance 2 vlan 30 40 
+! Enables Spanning Tree 
+Core-1(config)# spanning-tree 
+!Core-switch specific configuration: 
+!Core-1 is Root in Instance 1 
+Core-1(config)# spanning-tree instance 1 priority 0 
+!Core-1 is Secondary Root in Instance 2 
+Core-1(config)# spanning-tree instance 2 priority 1 
+!Core-1 is Root in Instance IST (0) 
+Core-1(config)# spanning-tree priority 0 
+ 
+ 
+Configuration of MSTP on Core-2*********************************************** 
+Core-2(config)# spanning-tree config-name "B10" 
+Core-2(config)# spanning-tree config-revision 1 
+Core-2(config)# spanning-tree instance 1 vlan 10 20 108 
+Core-2(config)# spanning-tree instance 2 vlan 30 40 
+Core-2(config)# spanning-tree 
+!Core-2 is Secondary Root in Instance 1 
+Core-2(config)# spanning-tree instance 1 priority 1 
+!Core-2 is Root in Instance 0 
+Core-2(config)# spanning-tree instance 2 priority 0 
+!Core-2 is Secondary Root in Instance IST(0) 
+Core-2(config)# spanning-tree priority 1 
+ 
+ 
+ 
+Configuration of MSTP on Edge switches****************************************** 
+Edge-1(config)# spanning-tree config-name "B10" 
+Edge-1(config)# spanning-tree config-revision 1 
+Edge-1(config)# spanning-tree instance 1 vlan 10 20 108 
+Edge-1(config)# spanning-tree instance 2 vlan 30 40 
+Edge-1(config)# spanning-tree 

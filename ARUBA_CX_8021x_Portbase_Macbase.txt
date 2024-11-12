@@ -1,0 +1,24 @@
+radius-server host 192.168.15.150 key plaintext (radius key)
+ 
+aaa group server radius Clearpass
+server 192.168.15.150
+ exit
+ 
+aaa authentication port-access dot1x authenticator radius server-group Clearpass
+aaa authentication port-access mac-auth radius server-group Clearpass
+aaa authentication port-access dot1x authenticator enable
+aaa authentication port-access mac-auth enable
+ 
+aaa authentication port-access dot1x authenticator auth-method eap-radius
+aaa authentication port-access dot1x authenticator radius server-group Clearpass  
+ 
+aaa group server radius  Clearpass
+server 192.168.15.150 vrf default
+exit
+ 
+interface 1/1/1
+aaa authentication port-access auth-precedence mac-auth dot1x
+aaa authentication port-access client-limit 2
+aaa authentication port-access dot1x authenticator enable
+aaa authentication port-access mac-auth enable
+ 

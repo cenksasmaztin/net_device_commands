@@ -1,0 +1,8 @@
+HP Switch(config)# class ipv4 http 
+HP Switch(config-class)# match tcp any any eq 80 
+HP Switch(config-class)# match tcp any any eq 8080 
+HP Switch(config-class)# exit 
+HP Switch(config)# policy qos RateLimitPrioritizeSuspectTraffic 
+HP Switch(policy-qos)# class ipv4 http action rate-limit kbps 10000 
+HP Switch(policy-qos)# default-class action priority 4 action dscp 5 
+HP Switch(policy-qos)# exit 

@@ -1,0 +1,37 @@
+; J9850A Configuration Editor; Created on release #KB.16.09.0001
+; Ver #14:2f.6f.f8.1d.fb.7f.bf.bb.ff.7c.59.fc.7b.ff.ff.fc.ff.ff.3f.ef:40
+hostname "SW-2"
+module A type j9990a
+module B type j9993a
+module C type j9996a
+vxlan enable
+vxlan tunnel 2 overlay-vlan 20
+ip route 1.1.1.1 255.255.255.255 10.0.1.1
+interface loopback 2
+   ip address 2.2.2.2
+   exit
+interface tunnel 2
+   tunnel name "right"
+   tunnel mode vxlan
+   tunnel source 2.2.2.2
+   tunnel destination 1.1.1.1
+   exit
+snmp-server community "public" unrestricted
+oobm
+   ip address dhcp-bootp
+   ipv6 enable
+   ipv6 address dhcp full
+   exit
+vlan 1
+   name "DEFAULT_VLAN"
+   no untagged A2
+   untagged A1,A3-A24,B1-B8,C1-C2
+   ip address 10.0.1.2 255.255.255.252
+   exit
+vlan 20
+   name "VLAN20"
+   untagged A2
+   no ip address
+   exit
+no allow-v2-modules
+virtual-network 300 20 "lll"

@@ -1,0 +1,9 @@
+ip access-list extended "100" 
+   deny ip 10.0.10.0 0.0.0.255 10.0.20.60 0.0.0.0 
+   permit ip 0.0.0.0 255.255.255.255 0.0.0.0 255.255.255.255 
+ 
+interface 2 
+   name "dunya_ftp&web" 
+   access-group "100" in 
+ 
+2610 VE 2910 DA INTERFACE BAZINDA ACL YAZILABILIR 

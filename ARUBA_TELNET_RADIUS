@@ -1,0 +1,69 @@
+radius-server host IP Address key procurve******************** 
+ 
+aaa authentication method enable/login auth1 auth2 
+ 
+aaa authentication console login radius local 
+aaa authentication console enable radius local 
+aaa authentication web login radius local 
+aaa authentication telnet login radius local********************* 
+aaa authentication telnet enable radius local******************* 
+aaa authentication ssh login radius local 
+aaa authentication ssh enable radius local 
+ 
+ 
+ 
+aaa authentication login privilege-mode 
+ 
+show authentication 
+ 
+Below is some output produced by this command: 
+ 
+J8698A-01# show authentication 
+ 
+ Status and Counters - Authentication Information 
+ 
+  Login Attempts : 3 
+  Respect Privilege : Enabled 
+ 
+              | Login      Login      Enable     Enable 
+  Access Task | Primary    Secondary  Primary    Secondary 
+  ----------- + ---------- ---------- ---------- ---------- 
+  Console     | Local      None       Local      None 
+  Telnet      | Radius     Local      Radius     Local 
+  Port-Access | Local      None 
+  Webui       | Radius     None       Local      None 
+  SSH         | Local      None       Local      None 
+  Web-Auth    | ChapRadius None 
+  MAC-Auth    | ChapRadius None 
+ 
+ 
+ 
+*********************************************************** 
+ 
+Running configuration: 
+ 
+; J4900C Configuration Editor; Created on release #H.10.83 
+ 
+hostname "ProCurve Switch 2626" 
+snmp-server community "public" Unrestricted 
+vlan 1 
+   name "DEFAULT_VLAN" 
+   untagged 1-26 
+   ip address 10.0.1.1 255.255.255.0 
+   exit 
+aaa authentication telnet login radius local 
+aaa authentication telnet enable radius local 
+radius-server host 10.0.1.110 key procurve 
+ 
+*************************************************** 
+ 
+aaa authentication login privilege-mode 
+aaa authentication telnet login radius local 
+aaa authentication telnet enable radius local 
+aaa accounting update periodic 10 
+aaa accounting suppress null-username 
+aaa accounting network start-stop radius 
+aaa accounting exec start-stop radius 
+aaa accounting system stop-only radius 
+radius-server host 10.0.1.110 key procurve 
+

@@ -1,0 +1,50 @@
+hostname "ProCurve Switch 3500-24"  
+module 1 type J94ddA  
+vlan 1  
+   name "DEFAULT_VLAN"  
+   untagged 1-24  
+   ip address 172.16.0.1 255.255.255.0  
+   exit  
+snmp-server community "public" unrestricted 
+spanning-tree 
+spanning-tree 1 admin-edge-port 
+spanning-tree 1 bpdu-protection 
+spanning-tree 2 admin-edge-port 
+spanning-tree 2 bpdu-protection 
+spanning-tree 3 admin-edge-port 
+spanning-tree 3 bpdu-protection 
+spanning-tree 4 admin-edge-port 
+spanning-tree 4 bpdu-protection 
+spanning-tree 5 admin-edge-port 
+spanning-tree 5 bpdu-protection 
+spanning-tree 6 admin-edge-port 
+spanning-tree 6 bpdu-protection 
+spanning-tree 7 admin-edge-port 
+spanning-tree 7 bpdu-protection 
+spanning-tree 8 admin-edge-port 
+spanning-tree 8 bpdu-protection 
+spanning-tree 9 admin-edge-port 
+spanning-tree 9 bpdu-protection 
+spanning-tree 10 admin-edge-port 
+spanning-tree 10 bpdu-protection 
+spanning-tree 11 admin-edge-port 
+spanning-tree 11 bpdu-protection 
+spanning-tree 12 admin-edge-port 
+spanning-tree 12 bpdu-protection 
+spanning-tree 13 admin-edge-port 
+spanning-tree 13 bpdu-protection 
+spanning-tree 14 admin-edge-port 
+spanning-tree 14 bpdu-protection 
+spanning-tree 15 admin-edge-port 
+spanning-tree 15 bpdu-protection 
+spanning-tree 16 admin-edge-port 
+spanning-tree 16 bpdu-protection 
+spanning-tree 17 admin-edge-port 
+spanning-tree 17 bpdu-protection 
+spanning-tree 18 admin-edge-port 
+spanning-tree 18 bpdu-protection 
+spanning-tree 19 admin-edge-port 
+spanning-tree 19 bpdu-protection 
+spanning-tree 20 admin-edge-port 
+spanning-tree 20 bpdu-protection 
+spanning-tree bpdu-protection-timeout 300 force-version rstp-operation 

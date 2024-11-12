@@ -1,0 +1,7 @@
+qos tcp-port 5060 dscp 101000 
+qos tcp-port 5061 dscp 101000 
+qos tcp-port 6000 dscp 101000 
+qos tcp-port 6001 dscp 101000 
+qos tcp-port 9000 dscp 101000 
+qos type-of-service diff-services 
+ 

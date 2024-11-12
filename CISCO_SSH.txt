@@ -1,0 +1,12 @@
+cisco router ssh ayarlari 
+
+
+Router(config)#ip ssh source-interface fastEthernet 0/0
+Router(config)#ip ssh authentication-retries 3
+Router(config)#ip ssh version 2
+Router(config)#ip domain-name local.net
+Router(config)#crypto key generate rsa modulus 768
+Router(config)#username hayri secret sezer
+Router(config)#line vty 0 15
+Router(config-line)# transport input ssh
+Router(config-line)# local login

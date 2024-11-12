@@ -1,0 +1,4 @@
+#monitor session 1 source interface fastEthernet 0/1
+ #monitor session 1 destination interface fastEthernet 0/2
+
+komutlariyla 1. portu 2. porta mirror etmis olursunuz.

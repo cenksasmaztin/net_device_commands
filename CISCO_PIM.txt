@@ -1,0 +1,10 @@
+ip multicast-routing
+!
+interface Vlan90
+ip address 172.20.25.1 255.255.255.0
+ip pim sparse-dense-mode
+ip igmp snooping querier
+!
+ip pim autorp listener
+ip pim send-rp-announce Vlan90 scope 5
+ip pim send-rp-discovery scope 5
