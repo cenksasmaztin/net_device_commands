@@ -1,0 +1,65 @@
+VLAN creation 
+Cisco(config)# vlan 99 
+Cisco(vlan-99)# vlan 100 
+Cisco(vlan-100)# vlan 200 
+Cisco(vlan-200)# vlan 201 
+Cisco(vlan-201)# vlan 202 
+Cisco(vlan-202)# vlan 203 
+Trunk ports 
+Cisco(config)# interface range gigabit 0/47 - 48 
+Cisco(config-if-range)# switchport encapsulation dot1q 
+Cisco(config-if-range)# switchport mode trunk 
+Cisco(config-if-range)# switchport trunk native vlan 99 
+Cisco(config-if-range)# switchport trunk allowed vlan 1,100,200-203 
+ 
+ 
+ 
+VLAN 99 MANAGEMENT VLAN 
+ 
+ 
+---------------------------------- 
+VOICE_VLAN 
+ 
+Access ports 
+Cisco(config)# interface range gigabit 0/1 - 24 
+Cisco(config-if-range)# switchport mode access 
+Cisco(config-if-range)# switchport access vlan 200 
+ 
+Voice ports 
+Cisco(config)# interface range gigabit 0/25 - 46 
+Cisco(config-if-range)# switchport mode access 
+Cisco(config-if-range)# switchport access vlan 200 
+Cisco(config-if-range)# switchport voice vlan 100 
+ 
+---------------------------------- 
+VLAN ROUTING 
+ 
+Management VLAN 
+Cisco(config)# int vlan 99 
+Cisco(config-if)# ip address 10.1.99.10 255.255.255.0 
+If not a routing switch: 
+Cisco(config)# ip default-gateway 10.1.99.1 
+If a routing switch: 
+Cisco(config)# ip routing 
+Cisco(config)# int vlan 100 
+Cisco(config-if)# ip address 10.1.100.10 255.255.255.0 
+Cisco(config)# int vlan 200 
+Cisco(config-if)# ip address 10.1.200.10 255.255.255.0 
+Cisco(config)# int vlan 201 
+Cisco(config-if)# ip address 10.1.201.10 255.255.255.0 
+Cisco(config)# int vlan 202 
+Cisco(config-if)# ip address 10.1.202.10 255.255.255.0 
+Cisco(config)# int vlan 203 
+Cisco(config-if)# ip address 10.1.203.10 255.255.255.0 
+ 
+----------------------------------- 
+DHCP RELAY  
+ 
+IP addresses on interfaces vlan omitted 
+DHCP relay 
+Cisco(config)# int vlan 100 
+Cisco(config-if)# ip helper-address 10.1.1.100 
+Cisco(config-if)# ip helper-address 10.1.1.101 
+Cisco(config)# int vlan 200 
+Cisco(config-if)# ip helper-address 10.1.1.100 
+Cisco(config-if)# ip helper-address 10.1.1.101 

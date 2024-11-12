@@ -1,0 +1,73 @@
+Anahtar Çiftini Oluşturma
+Öncelikle, SSH için gerekli olan RSA anahtar çiftini oluşturmanız gerekiyor:
+
+bash
+Copy code
+switch(config)# crypto key generate rsa
+Anahtar boyutunu soracaktır, genellikle en az 1024 bit kullanmanız önerilir:
+
+bash
+Copy code
+How many bits in the modulus [512]: 1024
+2. SSH Sürümünü Belirleme
+SSH'nin hangi sürümünü kullanmak istediğinizi belirleyin. SSH versiyon 2 daha güvenlidir ve genellikle tercih edilir:
+
+bash
+Copy code
+switch(config)# ip ssh version 2
+3. Kullanıcı ve Şifre Tanımlama
+Yönetim erişimi için bir kullanıcı adı ve şifre oluşturun:
+
+bash
+Copy code
+switch(config)# username <kullanıcı_adı> password <şifre>
+4. VTY Hatlarını Yapılandırma
+VTY (Virtual Teletype) hatları üzerinden SSH erişimini yapılandırın:
+
+bash
+Copy code
+switch(config)# line vty 0 15
+switch(config-line)# login local
+switch(config-line)# transport input ssh
+Bu, VTY hatlarının yerel kullanıcı veritabanını kullanarak kimlik doğrulaması yapmasını sağlar ve sadece SSH üzerinden erişime izin verir.
+
+5. (Opsiyonel) SSH Zaman Aşımını ve Giriş Denemelerini Ayarlama
+SSH oturumları için zaman aşımı ve maksimum giriş deneme sayısını belirleyin:
+
+bash
+Copy code
+switch(config)# ip ssh time-out 60
+switch(config)# ip ssh authentication-retries 3
+6. (Opsiyonel) SSH Banner Mesajı Ayarlama
+Kullanıcılara SSH girişinde gösterilecek bir uyarı mesajı ayarlayın:
+
+bash
+Copy code
+switch(config)# banner login ^C
+Unauthorized access to this device is prohibited.
+^C
+Yapılandırmayı Kaydetme
+Yapılandırmalarınızı kaydedin:
+
+bash
+Copy code
+switch# write memory
+Özet Konfigürasyon
+Yukarıdaki adımların tamamını içeren örnek bir SSH konfigürasyonu:
+
+bash
+Copy code
+switch(config)# crypto key generate rsa
+How many bits in the modulus [512]: 1024
+switch(config)# ip ssh version 2
+switch(config)# username admin password password123
+switch(config)# line vty 0 15
+switch(config-line)# login local
+switch(config-line)# transport input ssh
+switch(config)# ip ssh time-out 60
+switch(config)# ip ssh authentication-retries 3
+switch(config)# banner login ^C
+Unauthorized access to this device is prohibited.
+^C
+switch# write memory
+Bu adımlar, Cisco switch üzerinde SSH erişimini etkinleştirmenizi sağlar ve güvenli bir yönetim sağlar. Daha detaylı bilgiler ve ek güvenlik önlemleri için Cisco'nun resmi dokümantasyonlarına başvurabilirsiniz.

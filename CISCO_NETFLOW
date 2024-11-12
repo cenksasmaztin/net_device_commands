@@ -1,0 +1,25 @@
+
+router(config)#ip flow-export source fastethernet0/0 
+router(config)#ip flow-export version 5 
+router(config)#ip flow-export destination 10.0.1.100 2055 
+router(config)#interface fastethernet0/0 
+router(config-if)#ip flow eggress 
+router(config-if)#ip flow ingress 
+router(config-if)#ip route-cache flow 
+router(config-if)#exit 
+router(config)#exit 
+router#wr mem 
+ 
+ 
+ 
+ 
+ip flow-export source vlan1 
+ip flow-export version 5 
+ip flow-export destination 10.0.1.2 2055 
+interface vlan 1 
+ip flow eggress 
+ip flow ingress 
+ip route-cache flow 
+exit 
+exit 
+wr mem 

@@ -1,0 +1,6 @@
+CiscoIOSSwitch(config)#interface gigabitEthernet 1/1 
+CiscoIOSSwitch(config-if)#channel-group 1 mode active  
+Creating a port-channel interface Port-channel 1 
+CiscoIOSSwitch(config-if)#interface gigabitEthernet 2/1 
+CiscoIOSSwitch(config-if)#channel-group 1 mode active 
+Creating a port-channel interface Port-channel 1 

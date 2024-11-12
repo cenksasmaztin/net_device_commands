@@ -1,0 +1,21 @@
+Switch(config)#vtp domain dunya 
+ 
+ 
+Switch(config)#vtp mode  
+ 
+client       Set the device to client mode. 
+server       Set the device to server mode. 
+transparent  Set the device to transparent mode. 
+ 
+server tarafinda conf edilen switchin portlari trunk_port olmasi gerek 
+ 
+server da güncellenen tüm vlan lar client olarak belirlenen tüm kenar switchlerde  
+5dk da bir güncellenir. 
+ 
+server tarafinda trunk olacak interface için  
+ 
+interface FastEthernet0/11 
+ switchport trunk encapsulation dot1q 
+ switchport mode trunk 
+ 
+ayari yapmak yeterli  

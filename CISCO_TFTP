@@ -1,0 +1,3 @@
+copy flash:c2950-i6q4l2-mz.121-22.EA8a.bin tftp   (FLASH DAN TFTP YE) 
+ 
+copy tftp:c2950-i6q4l2-mz.121-22.EA8a.bin flash   (TFTP DEN FLASHA)

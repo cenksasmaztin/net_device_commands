@@ -1,0 +1,47 @@
+
+Port Security Etkinleştirme: Port security özelliğini etkinleştirmek için kullanılır.
+
+plaintext
+Copy code
+Switch(config)# interface {interface_id}
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport port-security
+Maksimum MAC Adresi Sayısını Ayarlama: Belirli bir port için izin verilen maksimum MAC adresi sayısını belirler.
+
+plaintext
+Copy code
+Switch(config-if)# switchport port-security maximum {number}
+Statik MAC Adresi Atama: Belirli bir port için statik MAC adresleri atar.
+
+plaintext
+Copy code
+Switch(config-if)# switchport port-security mac-address {mac_address}
+Port Güvenlik İhlal Eylemi: Bir güvenlik ihlali durumunda ne yapılacağını belirler (shutdown, restrict, protect).
+
+plaintext
+Copy code
+Switch(config-if)# switchport port-security violation {shutdown | restrict | protect}
+Aging Zamanlayıcıyı Ayarlama: Belirli bir süre sonra dinamik MAC adreslerini kaldırmak için aging zamanlayıcısını ayarlar.
+
+plaintext
+Copy code
+Switch(config-if)# switchport port-security aging time {time_in_minutes}
+Switch(config-if)# switchport port-security aging type {absolute | inactivity}
+Port Güvenlik Durumunu Görüntüleme: Port güvenlik ayarlarını ve ihlallerini görüntülemek için kullanılır.
+
+plaintext
+Copy code
+Switch# show port-security interface {interface_id}
+Örnek bir yapılandırma:
+
+plaintext
+Copy code
+Switch(config)# interface fastEthernet 0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport port-security
+Switch(config-if)# switchport port-security maximum 2
+Switch(config-if)# switchport port-security mac-address 00D0.D3B2.6F01
+Switch(config-if)# switchport port-security violation restrict
+Switch(config-if)# switchport port-security aging time 5
+Switch(config-if)# switchport port-security aging type inactivity
+Bu komutlar, Cisco switchlerde port güvenliğini yapılandırmak için temel adımlardır. Daha detaylı bilgi için Cisco'nun resmi dokümantasyonlarına başvurabilirsiniz.

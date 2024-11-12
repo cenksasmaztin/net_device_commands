@@ -1,0 +1,125 @@
+Önce vss 
+
+http://www.youtube.com/watch?v=UTmO9Zd5m_Q 
+
+
+
+VSS*************
+
+SW 1
+
+conf t
+
+switch virtual domain 13  
+
+switch 1
+
+exit
+
+interface port-channel 1
+
+switch virtual link 1
+
+no shut
+
+exit
+
+interface ten 1/4 - 5
+
+channel-group 1 mode on
+
+no shut 
+
+switch convert mode virtual
+
+
+
+SW 2
+
+conf t
+
+switch virtual domain 13  
+
+switch 2
+
+exit
+
+interface port-channel 2
+
+switch virtual link 2
+
+no shut
+
+exit
+
+interface ten 1/4 - 5
+
+channel-group 2 mode on
+
+no shut 
+
+switch convert mode virtual
+
+
+
+show switch virtual
+
+show switch virtual link
+
+show switch virtual role
+
+ 
+
+FEX*************
+
+
+
+module provision create fex 110 type C6800IA-48FPD  slot 1 
+
+ 
+
+interface port-channel 110 
+
+switchport 
+
+switchport mode fex-fabric 
+
+fex associate 110 
+
+ 
+
+ 
+
+ 
+
+interface tenGigabitEthernet 1/1/10 
+
+no ip address 
+
+no channel-protocol lacp 
+
+no channel-protocol pagp 
+
+channel-group 110 mode on 
+
+ 
+
+ 
+
+ 
+
+ switchport 
+
+ switchport mode fex-fabric 
+
+ channel-group 110 mode on 
+
+no shut 
+
+ 
+
+interface port-channel 110 
+
+no shut 
+
+ 

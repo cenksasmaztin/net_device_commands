@@ -1,0 +1,28 @@
+Pvst ile vlan bazında stp enable edilince (defaul enable) 
+ 
+Root switch seçimi için vlan bzında aşağıdaki komutları girmek gerekir.  
+ 
+core(config)#spanning-tree vlan 1 root primary 
+core(config)#spanning-tree vlan 2 root primary 
+core(config)#spanning-tree vlan 3 root primary 
+ 
+ 
+Şayet 2 core siwtch varsa 
+ 
+Sw A 
+core(config)#spanning-tree vlan 1 root primary 
+core(config)#spanning-tree vlan 2 root primary 
+core(config)#spanning-tree vlan 3 root primary 
+core(config)#spanning-tree vlan 4 root secondary 
+core(config)#spanning-tree vlan 5 root secondary 
+core(config)#spanning-tree vlan 6 root secondary 
+ 
+Sw B 
+core(config)#spanning-tree vlan 1 root secondary 
+core(config)#spanning-tree vlan 2 root secondary 
+core(config)#spanning-tree vlan 3 root secondary 
+core(config)#spanning-tree vlan 4 root primary 
+core(config)#spanning-tree vlan 5 root primary 
+core(config)#spanning-tree vlan 6 root primary 
+ 
+Şeklinde karşılıklı ayarlamak lazım 

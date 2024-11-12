@@ -1,0 +1,18 @@
+
+conf t
+radius-server host 172.16.3.155 auth-port 1812 acct-port 1813 key aruba123
+aaa authentication dot1x default group radius
+aaa new-model
+aaa authentication dot1x default group radius
+aaa authorization network default group radius
+dot1x system-auth-control
+
+interface g1/0/14
+switchport mode access
+dot1x pae authenticator
+authentication host-mode single-host
+authentication port-control auto
+spanning-tree portfast 
+
+aaa authentication login default local
+aaa authorization  exec default local

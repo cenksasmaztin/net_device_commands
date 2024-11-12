@@ -1,0 +1,65 @@
+SNMP Ayarlarını Yapılandırma
+SNMP Sunucusu Oluşturma ve Topluluk Adı Ayarlama
+
+bash
+Copy code
+switch(config)# snmp-server community <topluluk_adı> RO
+RO: Read-Only
+RW: Read-Write
+SNMP Sürüm 3 Kullanıcı Ayarları
+
+bash
+Copy code
+switch(config)# snmp-server group <grup_adı> v3 priv
+switch(config)# snmp-server user <kullanıcı_adı> <grup_adı> v3 auth md5 <şifre> priv des <şifre>
+SNMP Tuzağı (Trap) Sunucusu Ekleme
+
+bash
+Copy code
+switch(config)# snmp-server host <ip_adresi> version 2c <topluluk_adı>
+veya SNMPv3 için:
+
+bash
+Copy code
+switch(config)# snmp-server host <ip_adresi> version 3 <kullanıcı_adı>
+SNMP İstatistiklerini Görüntüleme
+SNMP Bilgilerini Görüntüleme
+
+bash
+Copy code
+switch# show snmp
+SNMP Topluluk Bilgilerini Görüntüleme
+
+bash
+Copy code
+switch# show snmp community
+SNMP İstatistiklerini Görüntüleme
+
+bash
+Copy code
+switch# show snmp statistics
+SNMP ile İlgili Sorunları Giderme
+SNMP Paketlerini İzleme
+
+bash
+Copy code
+switch# debug snmp packets
+SNMP Hatalarını İzleme
+
+bash
+Copy code
+switch# debug snmp errors
+SNMP Nesne Tanımlayıcılarına (OID) Erişim
+SNMP ile belirli bilgileri almak için SNMPv2c veya SNMPv3 kullanarak SNMP OID'lerine erişim yapabilirsiniz.
+
+SNMPv2c ile GET Komutu
+
+bash
+Copy code
+snmpget -v2c -c <topluluk_adı> <switch_ip_adresi> <oid>
+SNMPv3 ile GET Komutu
+
+bash
+Copy code
+snmpget -v3 -u <kullanıcı_adı> -l authPriv -a MD5 -A <auth_şifre> -x DES -X <priv_şifre> <switch_ip_adresi> <oid>
+Bu komutlar, Cisco switchlerde SNMP yapılandırması ve izleme işlemleri için temel komutlardır. SNMP'nin daha ileri seviye kullanımı ve detaylı ayarlar için Cisco'nun resmi dokümantasyonlarına başvurabilirsiniz.

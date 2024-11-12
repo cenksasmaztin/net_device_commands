@@ -1,0 +1,55 @@
+Ne tür bir cihaz yönetilirse yönetilsin, cihaza gelebilecek her türlü girişmler(başta login girişimleri olmak üzere) düzgün bir şekilde ve en kestirme yoldan düzenlenmelidir. Aşağıda, cihaz üzerinde uygulanabilecek login kısıtlamaları üzerine örnekler verilmiştir. 
+ 
+    Agciyiz(config)#login block-for 300 attempts 5 within 120 
+ 
+Uygulamada 120 saniye içerisinde bulunulabilecek 5 kez yanlış girişim için sistem kendini 300 sn bekleme moduna almaktadır. 
+ 
+    Agciyiz(config)#login delay 30 
+ 
+Bu uygulamada ise, hatalı giriş sonrası bir sonraki girişimin bekletileceği süreyi belirler. 
+ 
+    Agciyiz(config)#login quiet mode access-class 8 
+ 
+İlk uygulamada da bahsedilen, belirli bir süre içinde bulunulabilecek hatalı girişimlerden dolayı, cihazda ortaya gelen isteklerin bloklandığı bir bloking süreci(quiet mod) oluşmakdır. Bu quiet modda bile,önceden belirlenen ACL 'ler ile belirlenen adreslerden gelen isteklere ayrıcalık tanınabilir. 
+ 
+Cihaza login olunabilecek aşamada güvenliği bir üst düzeye daha çıkartmak gerekirse, 
+ 
+    Agciyiz(config)# login on-failure log 
+ 
+komutu kullanılabilir. Bu komutla cihaza hatalı girişlerin loglanmasını ve bu sayede giriş çıkışların daha kontrollü bir şekilde incelenmesi sağlanmıştır. Komut eklenen birkaç parametreyle, aşağıdaki haliyle de kullanılabilmektedir; 
+ 
+    Agciyiz(config)# login on-failure log 5 
+ 
+Bu haliyle, cihaza yapılacak 5 hatalı girişten sonra log atılacağını göstermektedir. Farklı bir şekildeki yapılandırılması ise, 
+ 
+    Agciyiz(config)# login on-success log 
+ 
+şeklindedir. Burada yapılması istenen, cihaza başarılı bir şekilde giriş yapan her girişim için log tutulmasını sağlamaktır. Ayrıca, üstteki uygulamayla benzer şekilde; 
+ 
+    Agciyiz(config)# login on-success log 5 
+ 
+parametresi ile belli bir sayıdan sonra log tutulması gibi değişiklikler de yapılabilmektedir. 
+ 
+Cihaz üzerinde login güvenlik önlemleri olarak belirlediğimiz kısıtlamaları, 
+"show login" komutuyla göstertebiliriz. 
+ 
+    Agciyiz# show login 
+ 
+A default login delay of 30 seconds is applied. 
+No Quiet-Mode access list has been configured. 
+All successful login is logged and generate SNMP traps. 
+All failed login is logged and generate SNMP traps. 
+Router enabled to watch for login Attacks. 
+If more than 3 login failures occur in 120 seconds or less, logins will be disabled for 300 seconds. 
+Router presently in Quiet-Mode, will remain in Quiet-Mode for 88 seconds. 
+Denying logins from all sources. 
+ 
+Belki çoğu kişi için daha önemli olan, cihaza yapılan hatalı login girişmlerini ise, 
+"show login failure" komutuyla listeleyebiliriz. 
+ 
+    Agciyiz# show login failure 
+ 
+Username          Source IPAddr      lPort       Count                 TimeStamp 
+ 
+admin                 10.0.0.1             23           1              22:23:24 UTC Mon Jun 30 2010 
+root                  192.168.1.1          23           1              20:21:22 UTC Sun Jun 29 2010 

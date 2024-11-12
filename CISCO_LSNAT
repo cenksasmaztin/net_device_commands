@@ -1,0 +1,292 @@
+LSNAT - Load Sharing NAT yada Tcp Load Distribution diyebiliriz bu başlık için 
+ 
+ 
+ 
+Agimizda 
+ 
+192.168.1.10 
+192.168.1.11 
+192.168.1.12 
+192.168.1.13 
+192.168.1.14 
+192.168.1.15 
+ 
+IP leri olan Web Server lar olsun. 
+ 
+Bunlar ayni isi yapan Server lar. 
+ 
+ 
+Public IP miz elimizde sadece 80.1.1.100 Var. 
+ 
+Disardan gelen 80.1.1.100:80 istegi hangisine gidecek ? 
+ 
+Hangisine Static olarak belirlediysek ona gider. 
+ 
+Yalniz bizim istedigimiz su: 
+ 
+Disardan gelen 80.1.1.100:80 isteklerini bizim Router içerdekilere 
+ 
+ADIL BIR SEKILDE DAGITSIN 
+ 
+Server larin içerikleri ayni oldugu için sorun çikmaz. 
+ 
+Içerde Ahmet isimli kisiden 5 adet kopyaladigimizi düsünün. 
+Ahmet1, Ahmet2, Ahmet3, Ahmet4, Ahmet5. 
+Bunlarin hepsi ayni kisi. 
+Gelen Mektubun hangi Ahmet tarafindan cevaplandigi önemli degildir. 
+Böylece 5 Ahmet daha hizli mektup yazabilirler  
+ 
+NAT bilgimizi düsünerek yorum yapalim. 
+ 
+Sanirim burda söyle bisi olacak : 
+ 
+Disardan gelen IP nin Destination kismi 80.1.1.100:80 ise 
+sen bunu 192.168.1.10,11,12,13,14,15 :80 ile degistir. 
+ 
+NEyi ve NEYE kisimlarini tanimlamamiz lazimdir. 
+ 
+ 
+Kod: 
+NEYI 
+***** 
+ CONF  
+IP ACCESS-LIST standard PublicIP 
+permit 80.1.1.1 0.0.0.0 
+
+Kod: 
+NEYE 
+***** 
+ IP NAT POOL AYNISERVERLAR 192.168.1.10 192.168.1.15 PREFIX-LENGTH 24 TYPE ROTARY 
+ 
+ROTARY -> Neye Kismi seçerken Round-Robin yöntemini kullan dedik. 
+ 
+ 
+Simdi Formülü Yazalim. 
+ 
+Önce kafamizda kurgulayalim. 
+ 
+Sesli düsünelim : 
+ 
+Outside interface den gelip, Inside Interface den cikacak 
+bir Packetin Destination IP kismi 80.1.1.1 ise 
+bu kismi 192.168.1.10,11,12,13,14,15 ile degistir ( Round-Robin ile ) 
+ 
+ 
+Formülü yazalim. 
+ 
+Kod: 
+ 
+CONF T 
+IP NAT INSIDE DESTINATION LIST PublicIP POOL AYNISERVERLAR  
+ 
+ 
+Formülü incelerseniz kafamiz karisir. 
+ 
+Simdiye kadar ögrendigimiz NAT formülene ters bir formül yazdim. 
+ 
+Halbuki ben söyle bir sey bekliyordum : 
+ 
+ 
+CONF T 
+IP NAT OUTSIDE DESTINATION LIST PublicIP POOL AYNISERVERLAR  
+ 
+ 
+ 
+ 
+Kod: 
+Bundan sonra  
+ 
+IP NAT INSIDE DESTINATION  ................. 
+ 
+Görürseniz 
+ 
+IP NAT OUTSIDE DESTINATION ............................ 
+ 
+Gibi muamele yapin  
+Niye böyle oldu peki ? Büyük ihtimal IOS Kodunu yazanlar tam bu kisima gelince canlari sikildi, sirf geyik olsun diye böyle yaptilar  
+￼
+ 
+ 
+Peki  
+ 
+Kod: 
+CONF T 
+IP NAT OUTSIDE DESTINATION ... 
+Yazarsak onunla karismaz mi ? 
+Karismaz. 
+Çünkü IOS da böyle bir komut yok. 
+ 
+ 
+ 
+ 
+Bu konunun ayri bir baslikda alinmasinin iki sebebi vardir : 
+ 
+ 
+Birincisi Formül deki bu karisiklikdir. ( Cidden ayri bir basligi hakediyor ) 
+ 
+Ikincisi ise bu sistemin TCP için çalismasidir. 
+ 
+Çünkü NAT Router Load Balance yaparken TCP Sessionlara göre yapar. 
+X ile Y arasindaki UDP Session i belirleyen her hangi bir sey olmadigi 
+için ondan çalismaz. 
+ 
+Unutmayin burda TCP packetlerinin Load Balance olmasi degil, 
+Session larin Load Balance olmasi durumu vardir. 
+ 
+Bir baglanti sana, bir baglanti bana, bir baglanti emmogluna seklindedir, 
+ 
+ 
+Son olarak bunun çalismasi için Trafigin disardan baslatilmasi  
+gerektigini anlayabiliriz. 
+ 
+Çünkü Static bir tanimlama yok. 
+Dynamic formülümüz var. 
+ 
+ 
+Disardan baslamasi gerekir çünkü  
+ 
+IP NAT INSIDE DESTINATION yazarken 
+ 
+IP NAT OUTSIDE DESTINATION kasteddiklerini biliyoruz  
+￼
+ 
+ 
+Dikkat ederseniz TCP kelimesini hiç kullanmadik. 
+ACL yazarken bile yok. Istersek yazabilirdik. 
+ 
+Ama bu Garip FORMÜL sanirim ona göre kodlanmis. 
+ 
+Sanirim tüm NAT konusunda DESTINATION adresi degistirebildigimiz  
+tek FORMÜL bu.  
+ 
+ 
+ 
+Not: 
+**** 
+ 
+Bunu UDP ile yapanlar gördüm internette. 
+Tabi Load Balance seklinde degil ama söyle : 
+ 
+Disardan gelen UDP 5000 ile 6000 isteklerini 
+içerdeki 192.168.1.10 adresine gönder seklinde. 
+ 
+Burda içerde tek kisi olacagindan sorun cikmayabilir. 
+Çünkü bir Dagitim olmayacaktir. 
+ 
+Pasted from <http://www.ciscotr.com/forum/cisco/8945-nat-7-lsnat-tcp-load-distribution.html>  
+ 
+ 
+ 
+ 
+Test Config 
+ 
+ 
+------------------------------------------------------------------------------------------------------------------------------------ 
+cisco800R(config)#ip access-list standard publicip 
+cisco800R(config-std-nacl)#permit 33.33.33.33 
+cisco800R(config)#ip nat pool webserver 10.0.50.240 10.0.50.250 netmask 255.255.255.0 type rotary 
+cisco800R(config)#ip nat inside destination list publicip pool webserver  
+ 
+interface Vlan1 
+ ip address 10.0.50.110 255.255.255.0 
+ ip nat inside 
+! 
+interface Vlan2 
+ ip address 33.33.33.33 255.255.255.0 
+ ip nat outside 
+------------------------------------------------------------------------------------------------------------------------------------- 
+Current configuration : 1141 bytes 
+! 
+version 12.4 
+no service pad 
+service timestamps debug datetime msec 
+service timestamps log datetime msec 
+no service password-encryption 
+! 
+hostname Router 
+! 
+boot-start-marker 
+boot-end-marker 
+! 
+enable password dunyacom 
+! 
+no aaa new-model 
+! 
+! 
+!  
+! 
+ip cef 
+! 
+! 
+! 
+! 
+! 
+multilink bundle-name authenticated 
+! 
+! 
+archive 
+ log config 
+  hidekeys 
+! 
+! 
+! 
+! 
+! 
+interface ATM0 
+ no ip address 
+ shutdown 
+ no atm ilmi-keepalive 
+ dsl operating-mode auto  
+! 
+interface FastEthernet0 
+! 
+interface FastEthernet1 
+! 
+interface FastEthernet2 
+! 
+interface FastEthernet3 
+ switchport access vlan 2 
+! 
+interface Vlan1 
+ ip address 10.0.50.110 255.255.255.0 
+ ip nat inside 
+ ip virtual-reassembly 
+! 
+interface Vlan2 
+ ip address 33.33.33.33 255.255.255.0 
+ ip nat outside 
+ ip virtual-reassembly 
+! 
+! 
+! 
+no ip http server 
+no ip http secure-server 
+ip nat pool websrv 10.0.50.240 10.0.50.241 netmask 255.255.255.0 type rotary 
+ip nat inside destination list PublicIP pool websrv 
+! 
+ip access-list standard PublicIP 
+ permit 33.33.33.33 
+! 
+! 
+! 
+! 
+! 
+control-plane 
+! 
+! 
+line con 0 
+ no modem enable 
+line aux 0 
+line vty 0 4 
+ password dunyacom 
+ login 
+! 
+scheduler max-task-time 5000 
+ 
+! 
+webvpn cef 
+end 
+ 
+ 
+ 
+ 

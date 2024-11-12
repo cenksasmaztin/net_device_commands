@@ -1,0 +1,35 @@
+
+testedge(config)#interface fastEthernet 0/10 
+testedge(config-if)#spanning-tree bpduguard enable 
+ 
+ 
+ 
+testedge(config)#errdisable recovery cause ? 
+  all                  Enable timer to recover from all error causes 
+  arp-inspection       Enable timer to recover from arp inspection error 
+                       disable state 
+  bpduguard            Enable timer to recover from BPDU Guard error 
+  channel-misconfig    Enable timer to recover from channel misconfig error 
+  dhcp-rate-limit      Enable timer to recover from dhcp-rate-limit error 
+  dtp-flap             Enable timer to recover from dtp-flap error 
+  gbic-invalid         Enable timer to recover from invalid GBIC error 
+  inline-power         Enable timer to recover from inline-power error 
+  link-flap            Enable timer to recover from link-flap error 
+  loopback             Enable timer to recover from loopback error 
+  mac-limit            Enable timer to recover from mac limit disable state 
+  pagp-flap            Enable timer to recover from pagp-flap error 
+  port-mode-failure    Enable timer to recover from port mode change failure 
+  psecure-violation    Enable timer to recover from psecure violation error 
+  security-violation   Enable timer to recover from 802.1x violation error 
+  sfp-config-mismatch  Enable timer to recover from SFP config mismatch error 
+  small-frame          Enable timer to recover from small frame error 
+  storm-control        Enable timer to recover from storm-control error 
+  udld                 Enable timer to recover from udld error 
+  vmps                 Enable timer to recover from vmps shutdown error 
+ 
+ 
+ 
+ 
+ 
+testedge(config)#errdisable recovery cause all 
+testedge(config)#errdisable recovery interval 300 

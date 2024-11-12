@@ -1,0 +1,7 @@
+#test cable-diagnostics tdr interface gigabitEthernet 103/1/0/8 
+Komutundan sonra  
+ 
+Komutu ile de sonuca bakılır 
+#show cable-diagnostics tdr interface gigabitEthernet 103/1/0/8 
+ 
+ 

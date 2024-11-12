@@ -1,0 +1,269 @@
+Types of IP ACLs 
+This section of the document describes ACL types. 
+Network Diagram 
+ 
+Standard ACLs 
+Standard ACLs are the oldest type of ACL. They date back to as early as Cisco IOS Software Release 8.3. 
+Standard ACLs control traffic by the comparison of the source address of the IP packets to the addresses 
+ 
+configured in the ACL. 
+This is the command syntax format of a standard ACL. 
+access-list access-list-number {permit|deny}  {host|source source-wildcard|any} 
+In all software releases, the access-list-number can be anything from 1 to 99. In Cisco IOS Software Release 
+12.0.1, standard ACLs begin to use additional numbers (1300 to 1999). These additional numbers are referred 
+to as expanded IP ACLs. Cisco IOS Software Release 11.2 added the ability to use list name in standard ACLs. 
+A source/source-wildcard setting of 0.0.0.0/255.255.255.255 can be specified as any. The wildcard can be 
+omitted if it is all zeros. Therefore, host 10.1.1.2 0.0.0.0 is the same as host 10.1.1.2. 
+After the ACL is defined, it must be applied to the interface (inbound or outbound). In early software releases, 
+out was the default when a keyword out or in was not specified. The direction must be specified in later 
+software releases. 
+interface <interface> 
+ip access-group number {in|out} 
+This is an example of the use of a standard ACL in order to block all traffic except that from source 10.1.1.x. 
+ 
+interface Ethernet0/0 
+ip address 10.1.1.1 255.255.255.0 
+ip access-group 1 in 
+access-list 1 permit 10.1.1.0 0.0.0.255 
+ 
+Extended ACLs 
+Extended ACLs were introduced in Cisco IOS Software Release 8.3. Extended ACLs control traffic by the 
+comparison of the source and destination addresses of the IP packets to the addresses configured in the 
+ACL. 
+This is the command syntax format of extended ACLs. Lines are wrapped here for spacing considerations. 
+IP 
+access-list access-list-number [dynamic dynamic-name [timeout minutes]] {deny|permit} protocol source source-wildcard destination destination-wildcard [precedence precedence] 
+[tos tos] [log|log-input] [time-range time-range-name] 
+ 
+ICMP 
+access-list access-list-number [dynamic dynamic-name [timeout minutes]] {deny|permit} icmp source source-wildcard destination destination-wildcard [icmp-type [icmp-code] |icmp-message] 
+[precedence precedence] [tos tos] [log|log-input] [precedence precedence] [tos tos] [log|log-input] [time-range time-range-name] 
+ 
+TCP 
+access-list access-list-number [dynamic dynamic-name [timeout minutes]] {deny|permit} tcp source source-wildcard [operator [port]] destination destination-wildcard [operator [port]] 
+[established] [precedence precedence] [tos tos] [log|log-input] [time-range time-range-name] 
+ 
+UDP 
+access-list access-list-number [dynamic dynamic-name [timeout minutes]] {deny|permit} udp source source-wildcard [operator [port]] destination destination-wildcard [operator [port]] 
+[precedence precedence] [tos tos] [log|log-input] [time-range time-range-name] 
+ 
+In all software releases, the access-list-number can be 100 to 199. In Cisco IOS Software Release 12.0.1, 
+extended ACLs begin to use additional numbers (2000 to 2699). These additional numbers are referred to as 
+expanded IP ACLs. Cisco IOS Software Release 11.2 added the ability to use list name in extended ACLs. 
+The value of 0.0.0.0/255.255.255.255 can be specified as any. After the ACL is defined, it must be applied to 
+the interface (inbound or outbound). In early software releases, out was the default when a keyword out or in 
+was not specified. The direction must be specified in later software releases. 
+interface <interface> 
+ip access-group {number|name} {in|out} 
+This extended ACL is used to permit traffic on the 10.1.1.x network (inside) and to receive ping responses 
+from the outside while it prevents unsolicited pings from people outside, permitting all other traffic. 
+interface Ethernet0/1 
+ip address 172.16.1.2 255.255.255.0 
+ip access-group 101 in 
+access-list 101 deny icmp any 10.1.1.0 0.0.0.255 echo 
+access-list 101 permit ip any 10.1.1.0 0.0.0.255 
+Note: Some applications such as network management require pings for a keepalive function. If this is the 
+case, you might wish to limit blocking inbound pings or be more granular in permitted/denied IPs. 
+Lock and Key (Dynamic ACLs) 
+Lock and key, also known as dynamic ACLs, was introduced in Cisco IOS Software Release 11.1. This 
+feature is dependent on Telnet, authentication (local or remote), and extended ACLs. 
+Lock and key configuration starts with the application of an extended ACL to block traffic through the router. 
+Users that want to traverse the router are blocked by the extended ACL until they Telnet to the router and are 
+authenticated. The Telnet connection then drops and a single-entry dynamic ACL is added to the extended 
+ACL that exists. This permits traffic for a particular time period; idle and absolute timeouts are possible. 
+This is the command syntax format for lock and key configuration with local authentication. 
+username user-name password password 
+interface <interface> 
+ip access-group {number|name} {in|out} 
+The single-entry ACL in this command is dynamically added to the ACL that exists after authentication. 
+access-list access-list-number dynamic name {permit|deny} [protocol] 
+{source source-wildcard|any} {destination destination-wildcard|any} 
+[precedence precedence][tos tos][established] [log|log-input] 
+[operator destination-port|destination port] 
+line vty line_range 
+login local 
+This is a basic example of lock and key. 
+username test password 0 test 
+!--- Ten (minutes) is the idle timeout. 
+username test autocommand access-enable host timeout 10 
+interface Ethernet0/0 
+ip address 10.1.1.1 255.255.255.0 
+ip access-group 101 in 
+access-list 101 permit tcp any host 10.1.1.1 eq telnet 
+!--- 15 (minutes) is the absolute timeout. 
+access-list 101 dynamic testlist timeout 15 permit ip 10.1.1.0 0.0.0.255 
+172.16.1.0 0.0.0.255 
+line vty 0 4 
+login local 
+After the user at 10.1.1.2 makes a Telnet connection to 10.1.1.1, the dynamic ACL is applied. The 
+connection is then dropped, and the user can go to the 172.16.1.x network. 
+ 
+IP Named ACLs 
+IP named ACLs were introduced in Cisco IOS Software Release 11.2. This allows standard and extended 
+ACLs to be given names instead of numbers. 
+This is the command syntax format for IP named ACLs. 
+ip access-list {extended|standard} name 
+This is a TCP example: 
+{permit|deny} tcp source source-wildcard [operator [port]] 
+destination destination-wildcard [operator [port]] [established] 
+[precedence precedence] [tos tos] [log] [time-range time-range-name] 
+This is an example of the use of a named ACL in order to block all traffic except the Telnet connection from 
+host 10.1.1.2 to host 172.16.1.1. 
+interface Ethernet0/0 
+ip address 10.1.1.1 255.255.255.0 
+ip access-group in_to_out in 
+ip access-list extended in_to_out 
+permit tcp host 10.1.1.2 host 172.16.1.1 eq telnet 
+Reflexive ACLs 
+Reflexive ACLs were introduced in Cisco IOS Software Release 11.3. Reflexive ACLs allow IP packets to be 
+filtered based on upper-layer session information. They are generally used to allow outbound traffic and to 
+limit inbound traffic in response to sessions that originate inside the router. 
+Reflexive ACLs can be defined only with extended named IP ACLs. They cannot be defined with numbered or 
+standard named IP ACLs, or with other protocol ACLs. Reflexive ACLs can be used in conjunction with other 
+standard and static extended ACLs. 
+This is the syntax for various reflexive ACL commands. 
+interface 
+ip access-group {number|name} {in|out} 
+ip access-list extended name 
+permit protocol any any reflect name [timeoutseconds] 
+ip access-list extended name 
+evaluate name 
+This is an example of the permit of ICMP outbound and inbound traffic, while only permitting TCP traffic that 
+has initiated from inside, other traffic is denied. 
+ip reflexive-list timeout 120 
+interface Ethernet0/1 
+ip address 172.16.1.2 255.255.255.0 
+ip access-group inboundfilters in 
+ip access-group inboundfilters in 
+ip access-group outboundfilters out 
+ip access-list extended inboundfilters 
+permit icmp 172.16.1.0 0.0.0.255 10.1.1.0 0.0.0.255 
+evaluate tcptraffic 
+!--- This ties the reflexive ACL part of the outboundfilters ACL, 
+!--- called tcptraffic, to the inboundfilters ACL. 
+ip access-list extended outboundfilters 
+permit icmp 10.1.1.0 0.0.0.255 172.16.1.0 0.0.0.255 
+permit tcp 10.1.1.0 0.0.0.255 172.16.1.0 0.0.0.255 reflect tcptraffic 
+ 
+Time-Based ACLs Using Time Ranges 
+Time-based ACLs were introduced in Cisco IOS Software Release 12.0.1.T. While similar to extended ACLs 
+in function, they allow for access control based on time. A time range is created that defines specific times of 
+the day and week in order to implement time-based ACLs. The time range is identified by a name and then 
+referenced by a function. Therefore, the time restrictions are imposed on the function itself. The time range 
+relies on the router system clock. The router clock can be used, but the feature works best with Network 
+Time Protocol (NTP) synchronization. 
+These are time-based ACL commands. 
+!--- Defines a named time range. 
+time-range time-range-name 
+!--- Defines the periodic times. 
+periodic days-of-the-week hh:mm to [days-of-the-week] hh:mm 
+!--- Or, defines the absolute times. 
+absolute [start time date] [end time date] 
+!--- The time range used in the actual ACL. 
+ip access-list name|number <extended_definition>time-rangename_of_time-range 
+In this example, a Telnet connection is permitted from the inside to outside network on Monday, Wednesday, 
+and Friday during business hours: 
+interface Ethernet0/0 
+ip address 10.1.1.1 255.255.255.0 
+ip access-group 101 in 
+access-list 101 permit tcp 10.1.1.0 0.0.0.255 172.16.1.0 0.0.0.255 
+eq telnet time-range EVERYOTHERDAY 
+time-range EVERYOTHERDAY 
+periodic Monday Wednesday Friday 8:00 to 17:00 
+Commented IP ACL Entries 
+Commented IP ACL entries were introduced in Cisco IOS Software Release 12.0.2.T. Comments make ACLs 
+easier to understand and can be used for standard or extended IP ACLs. 
+This is the commented name IP ACL command syntax. 
+ip access-list {standard|extended} access-list-name 
+remark remark 
+This is the commented numbered IP ACL command syntax. 
+access-list access-list-number remark remark 
+This is an example of commenting a numbered ACL. 
+interface Ethernet0/0 
+ip address 10.1.1.1 255.255.255.0 
+ip address 10.1.1.1 255.255.255.0 
+ip access-group 101 in 
+access-list 101 remark permit_telnet 
+access-list 101 permit tcp host 10.1.1.2 host 172.16.1.1 eq telnet 
+Context-Based Access Control 
+Context-based access control (CBAC) was introduced in Cisco IOS Software Release 12.0.5.T and requires 
+the Cisco IOS Firewall feature set. CBAC inspects traffic that travels through the firewall in order to discover 
+and manage state information for TCP and UDP sessions. This state information is used in order to create 
+temporary openings in the access lists of the firewall. Configure ip inspect lists in the direction of the flow of 
+traffic initiation in order to allow return traffic and additional data connections for permissible session, 
+sessions that originated from within the protected internal network, in order to do this. 
+This is the syntax for CBAC. 
+ip inspect name inspection-name protocol [timeoutseconds] 
+This is an example of the use of CBAC in order to inspect outbound traffic. Extended ACL 111 normally block 
+the return traffic other than ICMP without CBAC opening holes for the return traffic. 
+ip inspect name myfw ftp timeout 3600 
+ip inspect name myfw http timeout 3600 
+ip inspect name myfw tcp timeout 3600 
+ip inspect name myfw udp timeout 3600 
+ip inspect name myfw tftp timeout 3600 
+interface Ethernet0/1 
+ip address 172.16.1.2 255.255.255.0 
+ip access-group 111 in 
+ip inspect myfw out 
+access-list 111 deny icmp any 10.1.1.0 0.0.0.255 echo 
+access-list 111 permit icmp any 10.1.1.0 0.0.0.255 
+Authentication Proxy 
+Authentication proxy was introduced in Cisco IOS Software Release 12.0.5.T. This requires that you have the 
+Cisco IOS Firewall feature set. Authentication proxy is used to authenticate inbound or outbound users, or 
+both. Users who are normally blocked by an ACL can bring up a browser to go through the firewall and 
+authenticate on a TACACS+ or RADIUS server. The server passes additional ACL entries down to the router 
+in order to allow the users through after authentication. 
+Authentication proxy is similar to lock and key (dynamic ACLs). These are the differences: 
+Lock and key is turned on by a Telnet connection to the router. Authentication proxy is turned on by 
+HTTP through the router. 
+Authentication proxy must use an external server. 
+Authentication proxy can handle the addition of multiple dynamic lists. Lock and key can only add 
+one. 
+Authentication proxy has an absolute timeout but no idle timeout. Lock and key has both. 
+Refer to the Cisco Secure Integrated Software Configuration Cookbook for examples of authentication proxy. 
+Turbo ACLs 
+Turbo ACLs were introduced in Cisco IOS Software Release 12.1.5.T and are found only on the 7200, 7500, 
+and other high-end platforms. The turbo ACL feature is designed in order to process ACLs more efficiently in 
+order to improve router performance. 
+Use the access-list compiled command for turbo ACLs. This is an example of a compiled ACL. 
+access-list 101 permit tcp host 10.1.1.2 host 172.16.1.1 eq telnet 
+access-list 101 permit tcp host 10.1.1.2 host 172.16.1.1 eq ftp 
+access-list 101 permit udp host 10.1.1.2 host 172.16.1.1 eq syslog 
+access-list 101 permit udp host 10.1.1.2 host 172.16.1.1 eq tftp 
+access-list 101 permit udp host 10.1.1.2 host 172.16.1.1 eq ntp 
+After the standard or extended ACL is defined, use the global configuration command in order to compile. 
+!--- Tells the router to compile. 
+access-list compiled 
+Interface Ethernet0/1 
+ip address 172.16.1.2 255.255.255.0 
+ip address 172.16.1.2 255.255.255.0 
+!--- Applies to the interface. 
+ip access-group 101 in 
+The show access-list compiled command shows statistics about the ACL. 
+Distributed Time-Based ACLs 
+Distributed time-based ACLs were introduced in Cisco IOS Software Release 12.2.2.T in order to implement 
+time-based ACLs on VPN-enabled 7500 series routers. Before the introduction of the distributed time-based 
+ACL feature, time-based ACLs were not supported on line cards for the Cisco 7500 series routers. If timebased 
+ACLs were configured, they behaved as normal ACLs. If an interface on a line card was configured with 
+time-based ACLs, the packets switched into the interface were not distributed switched through the line card 
+but forwarded to the route processor in order to process. 
+The syntax for distributed time-based ACLs is the same as for time-based ACLs with the addition of the 
+commands in regards to the status of the Inter Processor Communication (IPC) messages between the route 
+processor and line card. 
+debug time-range ipc 
+show time-range ipc 
+clear time-range ipc 
+Receive ACLs 
+Receive ACLs are used in order to increase security on Cisco 12000 routers by the protection of the gigabit 
+route processor (GRP) of the router from unnecessary and potentially nefarious traffic. Receive ACLs were 
+added as a special waiver to the maintenance throttle for Cisco IOS Software Release 12.0.21S2 and 
+integrated into 12.0(22)S. Refer to GSR: Receive Access Control Lists for further information. 
+Infrastructure Protection ACLs 
+Infrastructure ACLs are used in order to minimize the risk and effectiveness of direct infrastructure attack by 
+the explicit permission of only authorized traffic to the infrastructure equipment while permitting all other 
+transit traffic. Refer to Protecting Your Core: Infrastructure Protection Access Control Lists for further 
+information. 
+Transit ACLs 
+Transit ACLs are used in order to increase network security since they explicitly permit only required traffic 
+into your network or networks. Refer to Transit Access Control Lists: Filtering at Your Edge for further 
+information. 

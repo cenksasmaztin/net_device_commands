@@ -1,0 +1,31 @@
+Core  switchd
+ 
+core(config)#ip igmp snooping 
+core(config)#ip igmp snooping querier 
+core(config)#ip igmp snooping querier timer expiry 120 
+ 
+Ayrıca setup box ve sunucların üzerinde port fast enable edilmesi gerekli 
+ 
+ 
+core(config)#interface gigabitEthernet 1/20 
+core(config-if)#spanning-tree portfast 
+ 
+ 
+Kenar switchlerde  
+ 
+ip igmp snooping vlan 40 querier address 10.40.0.1 
+ip igmp snooping vlan 40 querier timer expiry 120 
+ip igmp snooping vlan 1 immediate-leave 
+ 
+Kaynak <http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipmulti/command/imc-cr-book/imc_i1.html#wp2739534137>  
+ 
+ 
+ 
+ 
+interface range fastEthernet 0/1-48 
+spanning-tree portfast 
+ 
+Şayet sistemde bir aggregate switch varsa bu switch üzerinden ip igmp snooping açılmamalı!!!!  
+Şayet igmp snoop açılırsa core switch yada multicast server lardan gelen sw portuna bağlı olan port igmp yi engeller… 
+ 
+ 
