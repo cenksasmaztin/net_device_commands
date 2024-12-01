@@ -1,0 +1,238 @@
+
+#Zoom-Teams-QoS
+
+
+ --------------------Aruba OS QoS--------------------------------
+Core Switch (Aruba 5400R) 
+
+configure
+# Zoom ve Teams UDP portları için protokole dayalı önceliklendirme
+qos protocol udp 3478 priority 6
+qos protocol udp 3479 priority 6
+qos protocol udp range 8801 8810 priority 6
+qos protocol udp range 50000 50059 priority 5
+
+# Teams TCP portları için protokole dayalı önceliklendirme
+qos protocol tcp range 50000 50059 priority 5
+
+# DSCP İşaretleme (Opsiyonel)
+qos dscp 46 priority 6
+qos dscp 34 priority 5
+
+# DSCP Etiketlerinin Taşınması için Trunk Port QoS
+interface Trk1
+ qos trust dscp
+ exit
+
+
+Edge Switch (Aruba 2930F) Konfigürasyonu
+ configure
+# Zoom ve Teams UDP portları için protokole dayalı önceliklendirme
+qos protocol udp 3478 priority 6
+qos protocol udp 3479 priority 6
+qos protocol udp range 8801 8810 priority 6
+qos protocol udp range 50000 50059 priority 5
+
+# Teams TCP portları için protokole dayalı önceliklendirme
+qos protocol tcp range 50000 50059 priority 5
+
+# VLAN Tabanlı QoS (Tagged ve Untagged Portlar)
+vlan 10
+ tagged 1-4
+ qos priority 6
+ exit
+
+vlan 20
+ untagged 5-10
+ qos priority 5
+ exit
+
+# DSCP Etiketlerinin Korunması
+qos trust dscp
+
+bu konfigürasyon hem Aruba 5400R hem de Aruba 2930F switchlerde sorunsuz bir şekilde çalışır.
+	•	QoS ayarları her iki switch serisinde de Zoom, Teams gibi uygulamalara özel trafik önceliklendirme sağlamak için uygundur.
+	•	Protokol bazlı QoS, VLAN veya port bağımsız önceliklendirme yapmak için en verimli yöntemdir.
+	•	Tagged ve Untagged VLAN’lar, hem core hem de edge switchler arasında uyumlu çalışır.
+
+Eğer ağınızda daha fazla detaylandırılmış QoS yapılandırması gerekiyorsa (örneğin, kullanıcı bazlı veya subnet bazlı), bu yapılandırmaya 
+ACL’ler ve policy map ekleyebilirsiniz. Ancak, yukarıdaki yapılandırma genel ağ ihtiyaçlarını karşılamak için yeterlidir.
+
+
+
+------------------Aruba Controller 8.12 QoS----------------------
+
+# AppRF ile Uygulama Tanımlama
+application app-name Zoom
+ qos priority 6
+ exit
+
+application app-name MicrosoftTeams
+ qos priority 6
+ exit
+
+# Kullanıcı Rolü Tanımlama
+user-role Zoom-Teams
+ access-list session app Zoom permit queue high
+ access-list session app MicrosoftTeams permit queue high
+ access-list session Zoom-Teams-DSCP
+ exit
+
+# VLAN için QoS Profili
+vlan 10
+ qos-profile high-priority
+ exit
+
+# SSID için QoS Profili
+wlan Zoom-Teams-WLAN
+ qos-profile high-priority
+ exit
+
+# DSCP İşaretleme
+ip access-list session Zoom-Teams-DSCP
+ permit udp any any eq 3478 classify diffserv ef
+ permit udp any any range 8801 8810 classify diffserv af41
+ permit tcp any any range 50000 50059 classify diffserv af41
+ exit
+
+
+ Bu yapılandırma:
+	1.	AppRF: Zoom ve Teams trafiğini tanır ve önceliklendirir.
+	2.	Role-Based QoS: Kullanıcı rolleriyle trafiği kontrol eder.
+	3.	DSCP İşaretleme: Layer 3 seviyesinde trafiği önceliklendirir.
+	4.	VLAN/SSID QoS: Trafiği VLAN veya SSID üzerinden önceliklendirebilir.
+
+Bu yapılandırma, ArubaOS 8.12 üzerinde Zoom ve Teams gibi uygulamalara yönelik QoS sağlamanızı mümkün kılar. 
+AppRF, Aruba Controller’ın güçlü özelliklerinden biri olduğu için uygulama tabanlı tanımlamalar kolayca yapılabilir.
+
+
+
+----------------------Cisco Catalys 9000--------------------------
+
+Core Switch (Cisco 9500)
+
+configure terminal
+# Trafik Tanımlama
+class-map match-any ZOOM-TEAMS
+ match protocol udp port 3478
+ match protocol udp port 3479
+ match protocol udp range 8801 8810
+ match protocol udp range 50000 50059
+ match protocol tcp range 50000 50059
+ exit
+
+# QoS Politikası
+policy-map ZOOM-TEAMS-POLICY
+ class ZOOM-TEAMS
+  set dscp ef
+  priority level 1
+ exit
+
+# Politika Uygulama
+interface vlan 10
+ service-policy input ZOOM-TEAMS-POLICY
+ exit
+
+
+
+Edge Switch (Cisco 9200)
+
+ configure terminal
+# Trafik Tanımlama
+class-map match-any ZOOM-TEAMS
+ match protocol udp port 3478
+ match protocol udp port 3479
+ match protocol udp range 8801 8810
+ match protocol udp range 50000 50059
+ match protocol tcp range 50000 50059
+ exit
+
+# QoS Politikası
+policy-map ZOOM-TEAMS-POLICY
+ class ZOOM-TEAMS
+  set cos 6
+ exit
+
+# Politikayı Port veya VLAN’a Uygulama
+interface vlan 10
+ service-policy input ZOOM-TEAMS-POLICY
+ exit
+
+# VLAN Tabanlı Uygulama (Opsiyonel)
+interface vlan 10
+ service-policy input ZOOM-TEAMS-POLICY
+ exit
+
+Bu yapılandırma:
+	1.	Core Switch (9500): Trafiği Layer 3 seviyesinde DSCP ile işaretler ve yüksek öncelikli kuyruğa taşır.
+	2.	Edge Switch (9200): Trafiği Layer 2 seviyesinde CoS etiketiyle işaretler ve önceliklendirme sağlar.
+	3.	Tüm Ağda Tutarlılık: VLAN veya port bağımsız olarak Zoom ve Teams trafiği önceliklendirilir.
+
+Bu konfigürasyon, Zoom ve Teams gibi uygulamalar için yüksek performans ve düşük gecikme sağlamayı hedefler.
+
+
+
+
+-----------------------Aruba CX QoS ------------------------------
+Core Switch (6400)
+
+configure
+# Trafik Tanımlama
+class map ZOOM-TEAMS
+ match udp dst-port 3478
+ match udp dst-port 3479
+ match udp dst-range 8801 8810
+ match udp dst-range 50000 50059
+ match tcp dst-range 50000 50059
+ exit
+
+# QoS Politikası
+policy map ZOOM-TEAMS-POLICY
+ class ZOOM-TEAMS
+  set dscp 46
+  priority 6
+ exit
+
+# VLAN Tabanlı QoS
+vlan 10
+ service-policy input ZOOM-TEAMS-POLICY
+ exit
+
+# DSCP Tabanlı QoS Tanıma
+interface 1/1/1
+ qos trust dscp
+ exit
+
+
+Edge Switch (6200)
+
+configure
+# Trafik Tanımlama
+class map ZOOM-TEAMS
+ match udp dst-port 3478
+ match udp dst-port 3479
+ match udp dst-range 8801 8810
+ match udp dst-range 50000 50059
+ match tcp dst-range 50000 50059
+ exit
+
+# QoS Politikası
+policy map ZOOM-TEAMS-POLICY
+ class ZOOM-TEAMS
+  set dscp 46
+  priority 6
+ exit
+
+# Port Tabanlı QoS
+interface 1/1/2
+ service-policy input ZOOM-TEAMS-POLICY
+ exit
+
+
+ Core Switch: Trafiği Layer 3 seviyesinde DSCP ile işaretler ve yüksek öncelikli kuyruğa taşır.
+	•	Edge Switch: Trafiği Layer 2 seviyesinde CoS/DSCP etiketiyle işaretler ve önceliklendirme sağlar.
+	•	Tüm Ağda Tutarlılık: VLAN veya port bağımsız olarak Zoom ve Teams trafiği önceliklendirilir.
+
+Bu yapılandırma, Zoom ve Teams gibi uygulamaların düşük gecikme ve yüksek performansla çalışmasını sağlar ve Aruba CX switchlerde protokole dayalı QoS uygulamak için ideal bir örnektir.
+
+
