@@ -1,0 +1,178 @@
+
+This documnet created by Oxoo Networks LLC.
+The purpose of this document is to explain the 
+multicast configuration for Cisco, Aruba and Hpe switches.                    
+
+cenk@pxoonetworks.com
+Oxoo Networks LLC.
+
+
+
+
+*******   Core (L3 Routing between VLAN's) VLAN 10,20
+*     *   Pim multicast routing between Vlan's with sparse-mode
+*     *   Quirer this Vlan's for multicast traffic.
+*******   All multicas source must be on this switch(streamer server etc.) 
+   *
+   *
+   *      (Trunk Uplink Port)
+   *
+   *
+ *******   Edge swich carrying only L2 traffic. All Vlan's igmp snooping configuration
+ *     *   Some case must be disable stp on port. (for disabled stp flapping) omust be open loop protect
+ *******   EDGE (L2 only) VLAN 10,20  
+
+Core Switch: Cisco 9500, Aruba cx 6400-8400, Comware 7500X, Hp Procurve 5400
+Edge switch: Cisco 9200, Aruba CX 6200, Comware 5130-5140, Hp Procurve 2930
+
+
+
+
+
+
+
+#Cisco Catalys 9000 Mulitcat Configuration
+
+
+9500-Core# configure terminal
+9500-Core(config)# ip routing
+9500-Core(config)# ip multicast-routing distributed
+
+9500-Core(config)# interface Vlan10
+9500-Core(config-if)# ip address 192.168.10.1 255.255.255.0
+9500-Core(config-if)# ip pim sparse-mode
+9500-Core(config-if)# ip igmp
+9500-Core(config-if)# exit
+
+9500-Core(config)# interface Vlan20
+9500-Core(config-if)# ip address 192.168.20.1 255.255.255.0
+9500-Core(config-if)# ip pim sparse-mode
+9500-Core(config-if)# ip igmp
+9500-Core(config-if)# exit
+
+9500-Core(config)# ip pim rp-address 192.168.10.1
+
+9500-Core(config)# vlan 10
+9500-Core(config-vlan)# ip igmp snooping
+9500-Core(config-vlan)# exit
+
+9500-Core(config)# vlan 20
+9500-Core(config-vlan)# ip igmp snooping
+9500-Core(config-vlan)# exit
+
+9200-Edge# configure terminal
+9200-Edge(config)# vlan 10
+9200-Edge(config-vlan)# ip igmp snooping
+9200-Edge(config-vlan)# exit
+
+9200-Edge(config)# vlan 20
+9200-Edge(config-vlan)# ip igmp snooping
+9200-Edge(config-vlan)# exit
+
+
+
+#Aruba CX Mulitcat Configuration
+
+
+CoreSwitch# configure terminal
+CoreSwitch(config)# ip multicast-routing
+
+CoreSwitch(config)# interface vlan 10
+CoreSwitch(config-if-vlan-10)# ip address 192.168.10.1/24
+CoreSwitch(config-if-vlan-10)# ip pim sparse-mode
+CoreSwitch(config-if-vlan-10)# ip igmp querier
+CoreSwitch(config-if-vlan-10)# exit
+
+CoreSwitch(config)# interface vlan 20
+CoreSwitch(config-if-vlan-20)# ip address 192.168.20.1/24
+CoreSwitch(config-if-vlan-20)# ip pim sparse-mode
+CoreSwitch(config-if-vlan-10)# ip igmp querier
+CoreSwitch(config-if-vlan-20)# exit
+
+CoreSwitch(config)# ip pim rp-address 192.168.10.1
+
+
+EdgeSwitch# configure terminal
+EdgeSwitch(config)# vlan 10
+EdgeSwitch(config-vlan-10)# ip igmp snooping
+EdgeSwitch(config-vlan-10)# exit
+
+EdgeSwitch(config)# vlan 20
+EdgeSwitch(config-vlan-20)# ip igmp snooping
+EdgeSwitch(config-vlan-20)# exit
+wr mem
+
+
+
+
+#HPE Comware Mulitcat Configuration
+[CoreSwitch] system-view
+[CoreSwitch] multicast routing-enable
+
+[CoreSwitch] interface Vlan-interface 10
+[CoreSwitch-Vlan-interface10] ip address 192.168.10.1 255.255.255.0
+[CoreSwitch-Vlan-interface10] pim sparse
+[CoreSwitch-Vlan-interface10] igmp-snooping enable
+[CoreSwitch-Vlan-interface10] igmp-snooping querier enable
+[CoreSwitch-Vlan-interface10] quit
+
+[[CoreSwitch] interface Vlan-interface 20
+[CoreSwitch-Vlan-interface20] ip address 192.168.20.1 255.255.255.0
+[CoreSwitch-Vlan-interface20] pim sparse
+[CoreSwitch-Vlan-interface20] igmp-snooping enable
+[CoreSwitch-Vlan-interface20] igmp-snooping querier enable
+[CoreSwitch-Vlan-interface20] quit
+
+[CoreSwitch] pim rp 192.168.10.1
+
+[CoreSwitch] vlan 10
+[CoreSwitch-vlan10] igmp-snooping enable
+[CoreSwitch-vlan10] quit
+
+[CoreSwitch] vlan 20
+[CoreSwitch-vlan20] igmp-snooping enable
+[CoreSwitch-vlan20] quit
+save
+
+
+
+
+
+#HP Procurve Mulitcat Configuration
+
+CoreSwitch# configure
+CoreSwitch(config)# ip routing
+CoreSwitch(config)# ip multicast-routing
+CoreSwitch(config)# router pim
+
+CoreSwitch(config)# vlan 10
+CoreSwitch(vlan-10)# ip address 192.168.10.1 255.255.255.0
+CoreSwitch(vlan-10)# ip igmp
+CoreSwitch(vlan-10)# pim sparse
+CoreSwitch(vlan-10)# ip igmp querier
+CoreSwitch(vlan-10)# exit
+
+CoreSwitch(config)# vlan 20
+CoreSwitch(vlan-20)# ip address 192.168.20.1 255.255.255.0
+CoreSwitch(vlan-20)# ip igmp
+CoreSwitch(vlan-20)# pim sparse
+CoreSwitch(vlan-10)# ip igmp querier
+CoreSwitch(vlan-20)# exit
+
+CoreSwitch(config)# ip pim rp-address 192.168.10.1
+
+
+EdgeSwitch# configure
+EdgeSwitch(config)# vlan 10
+EdgeSwitch(vlan-10)# ip igmp-snooping
+EdgeSwitch(vlan-10)# exit
+
+EdgeSwitch(config)# vlan 20
+EdgeSwitch(vlan-20)# ip igmp-snooping
+EdgeSwitch(vlan-20)# exit
+
+
+
+
+
+
